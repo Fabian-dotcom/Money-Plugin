@@ -14,6 +14,7 @@ import de.fabian.server2026.money.listener.PlayerJoinListener;
 import de.fabian.server2026.money.listener.SettingsClickListener;
 import de.fabian.server2026.money.settings.PlayerSettingsManager;
 import de.fabian.server2026.money.shop.AnvilInput;
+import de.fabian.server2026.money.shop.ShopLogManager;
 import de.fabian.server2026.money.stats.SalesStatsManager;
 import de.fabian.server2026.money.command.ShopCommand;
 import de.fabian.server2026.money.shop.ShopListener;
@@ -34,6 +35,8 @@ public final class Money extends JavaPlugin {
     private PlayerSettingsManager settingsManager;
     private SalesStatsManager stats;
 
+    private ShopLogManager shopLog;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -44,6 +47,8 @@ public final class Money extends JavaPlugin {
         economy = new EconomyManager(this);
         settingsManager = new PlayerSettingsManager(this);
         stats = new SalesStatsManager(this);
+
+        shopLog = new ShopLogManager(this);
 
         // GUI initialisieren
         SettingsGUI.init(this, settingsManager, economy);
@@ -56,11 +61,20 @@ public final class Money extends JavaPlugin {
         ShopCommand shopCommand = new ShopCommand(economy, settingsManager, prices);
         getCommand("shop").setExecutor(shopCommand);
 
-        // Shop Listener registrieren
+        ShopLogManager shopLog = new ShopLogManager(this);
+
         getServer().getPluginManager().registerEvents(
-                new ShopListener(shopCommand.getShopGUI(), economy, settingsManager, stats),
+                new ShopListener(
+                        shopCommand.getShopGUI(),
+                        economy,
+                        settingsManager,
+                        stats,
+                        shopLog
+                ),
                 this
         );
+
+
 
 
         // Scoreboard Auto-Refresh (alle 60 Sekunden)
@@ -78,6 +92,12 @@ public final class Money extends JavaPlugin {
                 20L * 30  // Wiederholung alle 30 Sekunden
         );
 
+        Bukkit.getScheduler().runTaskTimer(
+                this,
+                shopLog::flushToDisk,
+                20L * 60,
+                20L * 60
+        );
 
         // Commands
         getCommand("money").setExecutor(
@@ -119,6 +139,18 @@ public final class Money extends JavaPlugin {
                 new PlayerJoinListener(economy, settingsManager, stats),
                 this
         );
+
+        getServer().getPluginManager().registerEvents(
+                new ShopListener(
+                        shopCommand.getShopGUI(),
+                        economy,
+                        settingsManager,
+                        stats,
+                        shopLog
+                ),
+                this
+        );
+
 
 
         getLogger().info("Money Plugin aktiviert!");

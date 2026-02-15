@@ -12,16 +12,27 @@ public class MoneyScoreboard {
 
     private static final String OBJECTIVE_NAME = "money";
 
+    // Bestehende Methode bleibt unverändert
     public static void update(
             Player player,
             EconomyManager economy,
             PlayerSettingsManager settings,
             SalesStatsManager stats
     ) {
+        update(player, economy, settings, stats, true);
+    }
+
+    // NEUE Methode mit boolean
+    public static void update(
+            Player player,
+            EconomyManager economy,
+            PlayerSettingsManager settings,
+            SalesStatsManager stats,
+            boolean includeSales
+    ) {
         UUID uuid = player.getUniqueId();
 
         if (!settings.isScoreboardEnabled(uuid)) {
-            // entferne Sidebar falls vorhanden
             try {
                 player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
             } catch (Exception ignored) {}
@@ -40,8 +51,8 @@ public class MoneyScoreboard {
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         double money = economy.getMoney(uuid);
-        double minute = stats.getMinute(uuid);
-        double hour = stats.getHour(uuid);
+        double minute = includeSales ? stats.getMinute(uuid) : 0.0;
+        double hour   = includeSales ? stats.getHour(uuid)   : 0.0;
 
         String notify = settings.getNotify(uuid).name().toLowerCase();
 
