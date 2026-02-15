@@ -1,5 +1,5 @@
 name: Money
-version: '4.02'
+version: '4.10'
 main: de.fabian.server2026.money.Money
 api-version: '1.21'
 authors: [ DoktorNilson ]

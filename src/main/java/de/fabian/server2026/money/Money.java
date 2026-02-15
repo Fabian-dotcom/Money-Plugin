@@ -140,17 +140,6 @@ public final class Money extends JavaPlugin {
                 this
         );
 
-        getServer().getPluginManager().registerEvents(
-                new ShopListener(
-                        shopCommand.getShopGUI(),
-                        economy,
-                        settingsManager,
-                        stats,
-                        shopLog
-                ),
-                this
-        );
-
 
 
         getLogger().info("Money Plugin aktiviert!");

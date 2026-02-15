@@ -22,7 +22,6 @@ public class AnvilInput {
      */
     public static void open(Player player, ShopItem item, EconomyManager economy, BiConsumer<Player, Integer> callback) {
         int size = 9;
-        // Wir benutzen keine ChatColor-Farben im stripbaren Bereich, damit ShopListener zuverlässig extrahiert
         String title = "Wähle Menge für " + item.getDisplayName();
         Inventory inv = Bukkit.createInventory(null, size, ChatColor.GREEN + title);
 
@@ -32,8 +31,10 @@ public class AnvilInput {
             ItemStack stack = new ItemStack(item.getMaterial());
             ItemMeta meta = stack.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW.toString() + amount + "x " + item.getDisplayName());
-            meta.setLore(List.of(ChatColor.AQUA + "Preis: " + (item.getPrice() * amount) + " Coins",
-                    ChatColor.GRAY + "Klicke um diese Menge zu kaufen"));
+            meta.setLore(List.of(
+                    ChatColor.AQUA + "Preis: " + (item.getPrice() * amount) + " Coins",
+                    ChatColor.GRAY + "Klicke um diese Menge zu kaufen"
+            ));
             stack.setItemMeta(meta);
 
             inv.setItem(i, stack);
@@ -41,6 +42,7 @@ public class AnvilInput {
 
         player.openInventory(inv);
 
-        // Callback optional: wir belassen die Kauf-Logik zentral im ShopListener
+        // Kauf-Logik wird über den Callback im Listener ausgeführt
     }
+
 }
