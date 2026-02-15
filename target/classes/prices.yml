@@ -1,0 +1,148 @@
+prices:
+
+  ## =========================
+  ## RAW MATERIALS
+  ## =========================
+  RAW_COPPER: 0.8
+  RAW_IRON: 1.2
+  RAW_GOLD: 2.5
+  AMETHYST_SHARD: 1.8
+
+  ## =========================
+  ## INGOTS & GEMS
+  ## =========================
+  COPPER_INGOT: 1.0
+  IRON_INGOT: 1.4
+  GOLD_INGOT: 2.7
+  DIAMOND: 40.0
+  EMERALD: 11.0
+  LAPIS_LAZULI: 2.5
+  REDSTONE: 1.2
+  REDSTONE_BLOCK: 10.8
+  COAL: 0.8
+  COAL_BLOCK: 7.5
+  AMETHYST_BLOCK: 7.0
+
+  ## =========================
+  ## NETHERITE (HIGH END)
+  ## =========================
+  NETHERITE_SCRAP: 75.0
+  NETHERITE_INGOT: 315.0
+  ANCIENT_DEBRIS: 2500.0
+  ELYTRA: 5000.0
+  ECHO_SHARD: 150.0
+
+  ## =========================
+  ## STONE & BUILDING BLOCKS
+  ## =========================
+  COBBLESTONE: 0.05
+  STONE: 0.08
+  STONE_BRICKS: 0.12
+  MOSSY_STONE_BRICKS: 0.15
+  ANDESITE: 0.08
+  DIORITE: 0.08
+  GRANITE: 0.08
+  SAND: 0.04
+  RED_SAND: 0.04
+  GRAVEL: 0.03
+  OBSIDIAN: 5.0
+  SANDSTONE: 0.15
+  CHISELED_SANDSTONE: 0.25
+  SMOOTH_STONE: 0.12
+  SMOOTH_SANDSTONE: 0.2
+
+  ## =========================
+  ## PLANTS / FARMS
+  ## =========================
+  CACTUS: 7.0
+  SUGARCANE: 6.5
+  BAMBOO: 0.4
+  KELP: 1.6
+  NETHER_WART: 2.5
+  VINE: 0.5
+  POTTED_CACTUS: 1.0
+  POTTED_SUGAR_CANE: 1.5
+
+  ## =========================
+  ## FOOD & CROPS
+  ## =========================
+  WHEAT: 6
+  CARROT: 4.1
+  POTATO: 4.0
+  BEETROOT: 3.5
+  APPLE: 2.5
+  SWEET_BERRIES: 1.8
+  GLOW_BERRIES: 2.1
+  PUMPKIN: 1.5
+  MELON_SLICE: 0.25
+  MUSHROOM_STEW: 3.0
+  BREAD: 4.0
+  COOKIE: 1.5
+
+  ## =========================
+  ## MOB DROPS
+  ## =========================
+  ROTTEN_FLESH: 0.15
+  BONE: 0.8
+  STRING: 0.7
+  GUNPOWDER: 1.2
+  SPIDER_EYE: 0.9
+  ENDER_PEARL: 3.5
+  SLIME_BALL: 2.0
+  PHANTOM_MEMBRANE: 4.0
+  LEATHER: 1.2
+  FEATHER: 0.4
+  PRISMARINE_SHARD: 2.0
+  PRISMARINE_CRYSTALS: 2.2
+  SADDLE: 80.0
+  HORSE_ARMOR_IRON: 75.0
+  HORSE_ARMOR_GOLD: 100.0
+  HORSE_ARMOR_DIAMOND: 250.0
+
+  ## =========================
+  ## NETHER
+  ## =========================
+  NETHERRACK: 0.03
+  SOUL_SAND: 0.2
+  SOUL_SOIL: 0.2
+  BASALT: 0.08
+  BLACKSTONE: 0.12
+  POLISHED_BLACKSTONE: 0.15
+  QUARTZ: 2.5
+  QUARTZ_BLOCK: 2.8
+  GLOWSTONE_DUST: 1.5
+  BLAZE_ROD: 6.0
+  MAGMA_CREAM: 3.0
+  NETHER_BRICKS: 0.25
+  CRIMSON_NYLIUM: 0.3
+  WARPED_NYLIUM: 0.3
+  SHROOMLIGHT: 3.5
+  CRIMSON_STEM: 0.15
+  WARPED_STEM: 0.15
+  CRIMSON_HYPHAE: 0.18
+  WARPED_HYPHAE: 0.18
+
+  ## =========================
+  ## END
+  ## =========================
+  END_STONE: 0.08
+  CHORUS_FRUIT: 1.2
+  PURPUR_BLOCK: 0.25
+  PURPUR_PILLAR: 0.3
+  SHULKER_SHELL: 40.0
+  DRAGON_BREATH: 250.0
+
+  ## =========================
+  ## RARE / SPECIAL
+  ## =========================
+  TRIDENT: 800.0
+  TOTEM_OF_UNDYING: 1000.0
+
+  ## =========================
+  ## BOOKS (not sellable)
+  ## =========================
+  protection_4: 300.0
+  sharp_5: 300.0
+  mending: 240.0
+  unbreaking_3: 240.0
+  fire_aspect_2: 150.0
