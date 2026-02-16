@@ -6,7 +6,7 @@
 
     <groupId>de.fabian.server2025</groupId>
     <artifactId>money</artifactId>
-    <version>4.10</version>
+    <version>4.11</version>
     <packaging>jar</packaging>
 
     <name>money</name>

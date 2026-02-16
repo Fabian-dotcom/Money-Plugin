@@ -46,6 +46,17 @@ public class BankManager {
         saveFile();
     }
 
+    public void removeBank(Location loc) {
+        String key = loc.getWorld().getName() + ";" +
+                loc.getBlockX() + ";" +
+                loc.getBlockY() + ";" +
+                loc.getBlockZ();
+
+        banks.remove(key);
+        config.set("banks." + key, null);
+        saveFile();
+    }
+
     public boolean isBank(Location loc) {
         String key = loc.getWorld().getName() + ";" +
                 loc.getBlockX() + ";" +

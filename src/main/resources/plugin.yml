@@ -1,5 +1,5 @@
 name: Money
-version: '4.10'
+version: '4.11'
 main: de.fabian.server2026.money.Money
 api-version: '1.21'
 authors: [ DoktorNilson ]
@@ -13,8 +13,12 @@ commands:
     usage: /<command>
     permission: money.givebank
   moneysettings:
-    description: Öffnet Einstellungen
+    description: Oeffnet Einstellungen
   pay:
-    description: Überweise Geld an einen Spieler
+    description: Ueberweise Geld an einen Spieler
   shop:
-    description: Öffnet den Shop
+    description: Oeffnet den Shop
+  shoplog:
+    description: Zeigt Shop-Kauf-Logs an
+    usage: /<command> [anzahl|player <name>|item <item>|reload]
+    permission: money.shoplog
