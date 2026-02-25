@@ -1,6 +1,9 @@
 package de.fabian.server2026.money;
 
+import de.fabian.server2026.money.achievement.AchievementManager;
 import de.fabian.server2026.money.bank.BankManager;
+import de.fabian.server2026.money.command.AchievementsCommand;
+import de.fabian.server2026.money.command.BankCommand;
 import de.fabian.server2026.money.command.GiveBankCommand;
 import de.fabian.server2026.money.command.MoneyCommand;
 import de.fabian.server2026.money.command.MoneySettingsCommand;
@@ -33,6 +36,7 @@ public final class Money extends JavaPlugin {
     private PlayerSettingsManager settingsManager;
     private SalesStatsManager stats;
     private ShopLogManager shopLog;
+    private AchievementManager achievements;
 
     @Override
     public void onEnable() {
@@ -44,13 +48,14 @@ public final class Money extends JavaPlugin {
         settingsManager = new PlayerSettingsManager(this);
         stats = new SalesStatsManager(this);
         shopLog = new ShopLogManager(this);
+        achievements = new AchievementManager(this);
 
         SettingsGUI.init(this, settingsManager, economy);
 
         File pricesFile = new File(getDataFolder(), "prices.yml");
         FileConfiguration prices = YamlConfiguration.loadConfiguration(pricesFile);
 
-        ShopCommand shopCommand = new ShopCommand(economy, settingsManager, prices);
+        ShopCommand shopCommand = new ShopCommand(this, economy, settingsManager, prices);
         getCommand("shop").setExecutor(shopCommand);
         getCommand("shoplog").setExecutor(new ShopLogCommand(shopLog));
 
@@ -60,7 +65,8 @@ public final class Money extends JavaPlugin {
                         economy,
                         settingsManager,
                         stats,
-                        shopLog
+                        shopLog,
+                        achievements
                 ),
                 this
         );
@@ -85,12 +91,14 @@ public final class Money extends JavaPlugin {
         getCommand("givebank").setExecutor(new GiveBankCommand(this));
         getCommand("moneysettings").setExecutor(new MoneySettingsCommand(settingsManager));
         getCommand("pay").setExecutor(new PayCommand(economy, settingsManager));
+        getCommand("bank").setExecutor(new BankCommand(bankManager));
+        getCommand("achievements").setExecutor(new AchievementsCommand(achievements));
 
         getServer().getPluginManager().registerEvents(new BankPlaceListener(bankManager), this);
         getServer().getPluginManager().registerEvents(new BankBreakListener(bankManager), this);
         getServer().getPluginManager().registerEvents(new SettingsClickListener(settingsManager), this);
         getServer().getPluginManager().registerEvents(
-                new BankChestListener(this, bankManager, economy, prices, settingsManager, stats),
+                new BankChestListener(this, bankManager, economy, prices, settingsManager, stats, achievements),
                 this
         );
         getServer().getPluginManager().registerEvents(

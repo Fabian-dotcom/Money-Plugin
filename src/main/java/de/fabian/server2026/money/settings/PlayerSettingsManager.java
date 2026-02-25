@@ -25,8 +25,6 @@ public class PlayerSettingsManager {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    /* Notify */
-
     public NotifyType getNotify(UUID uuid) {
         String s = config.getString("players." + uuid + ".notify", NotifyType.HOTBAR.name());
         try {
@@ -41,14 +39,21 @@ public class PlayerSettingsManager {
         save();
     }
 
-    /* Scoreboard */
-
     public boolean isScoreboardEnabled(UUID uuid) {
         return config.getBoolean("players." + uuid + ".scoreboard", true);
     }
 
     public void setScoreboardEnabled(UUID uuid, boolean enabled) {
         config.set("players." + uuid + ".scoreboard", enabled);
+        save();
+    }
+
+    public boolean isBankHologramEnabled(UUID uuid) {
+        return config.getBoolean("players." + uuid + ".bank_hologram", true);
+    }
+
+    public void setBankHologramEnabled(UUID uuid, boolean enabled) {
+        config.set("players." + uuid + ".bank_hologram", enabled);
         save();
     }
 

@@ -13,54 +13,51 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.Locale;
 
 public class SettingsGUI {
+
+    public static final String TITLE = "§8Einstellungen";
 
     private static PlayerSettingsManager settings;
     private static EconomyManager economy;
     private static JavaPlugin plugin;
 
-    // ðŸ”¹ saubere Initialisierung
-    public static void init(
-            JavaPlugin pluginInstance,
-            PlayerSettingsManager settingsManager,
-            EconomyManager economyManager
-    ) {
+    public static void init(JavaPlugin pluginInstance, PlayerSettingsManager settingsManager, EconomyManager economyManager) {
         plugin = pluginInstance;
         settings = settingsManager;
         economy = economyManager;
     }
 
     public static Inventory create(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 27, "Â§8âš™ Einstellungen");
+        Inventory inv = Bukkit.createInventory(null, 27, TITLE);
 
         inv.setItem(11, notifyItem(player));
         inv.setItem(13, profileItem(player));
         inv.setItem(15, scoreboardItem(player));
+        inv.setItem(16, bankHologramItem(player));
 
         return inv;
     }
 
-    // ðŸ”” Notify
     private static ItemStack notifyItem(Player p) {
         ItemStack item = new ItemStack(Material.BELL);
         ItemMeta meta = item.getItemMeta();
 
         NotifyType type = settings.getNotify(p.getUniqueId());
 
-        meta.setDisplayName("Â§eGeld-Benachrichtigung");
+        meta.setDisplayName("§eGeld-Benachrichtigung");
         meta.setLore(List.of(
-                "Â§7Modus:",
-                "Â§6" + type.name(),
+                "§7Modus:",
+                "§6" + type.name(),
                 "",
-                "Â§8Klicken zum Wechseln"
+                "§8Klicken zum Wechseln"
         ));
 
         item.setItemMeta(meta);
         return item;
     }
 
-    // ðŸ‘¤ Profilkopf
     private static ItemStack profileItem(Player p) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
@@ -69,32 +66,49 @@ public class SettingsGUI {
 
         String version = plugin.getDescription().getVersion();
 
-        meta.setDisplayName("Â§6ðŸ’° Money Plugin Â§7v" + version);
+        meta.setDisplayName("§6Money Plugin §7v" + version);
         meta.setLore(List.of(
-                "Â§7von Â§eFabian",
+                "§7von §eFabian",
                 "",
-                "Â§7Spieler: Â§f" + p.getName(),
-                "Â§7Kontostand:",
-                "Â§a" + String.format("%.2f", economy.getMoney(p)) + " Coins"
+                "§7Spieler: §f" + p.getName(),
+                "§7Kontostand:",
+                "§a" + String.format(Locale.US, "%.2f", economy.getMoney(p)) + " Coins"
         ));
 
         head.setItemMeta(meta);
         return head;
     }
 
-    // ðŸ“Š Scoreboard
     private static ItemStack scoreboardItem(Player p) {
         ItemStack item = new ItemStack(Material.PAINTING);
         ItemMeta meta = item.getItemMeta();
 
         boolean enabled = settings.isScoreboardEnabled(p.getUniqueId());
 
-        meta.setDisplayName("Â§eScoreboard");
+        meta.setDisplayName("§eScoreboard");
         meta.setLore(List.of(
-                "Â§7Status:",
-                enabled ? "Â§aAktiv" : "Â§cDeaktiviert",
+                "§7Status:",
+                enabled ? "§aAktiv" : "§cDeaktiviert",
                 "",
-                "Â§8Klicken zum Umschalten"
+                "§8Klicken zum Umschalten"
+        ));
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private static ItemStack bankHologramItem(Player p) {
+        ItemStack item = new ItemStack(Material.ARMOR_STAND);
+        ItemMeta meta = item.getItemMeta();
+
+        boolean enabled = settings.isBankHologramEnabled(p.getUniqueId());
+
+        meta.setDisplayName("§eBank-Hologramm");
+        meta.setLore(List.of(
+                "§7Verkaufsanzeige ueber Bankchests",
+                enabled ? "§aAktiv" : "§cDeaktiviert",
+                "",
+                "§8Klicken zum Umschalten"
         ));
 
         item.setItemMeta(meta);

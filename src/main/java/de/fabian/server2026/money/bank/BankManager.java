@@ -8,7 +8,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -75,6 +77,16 @@ public class BankManager {
         return banks.get(key);
     }
 
+    public List<Bank> getBanksByOwner(UUID owner) {
+        List<Bank> result = new ArrayList<>();
+        for (Bank bank : banks.values()) {
+            if (bank.getOwner().equals(owner)) {
+                result.add(bank);
+            }
+        }
+        return result;
+    }
+
     private void loadBanks() {
         if (!config.contains("banks")) return;
 
@@ -97,11 +109,9 @@ public class BankManager {
         return banks;
     }
 
-    // Hilfsmethode für Listener, alle Bank-Objekte als Liste zurückzugeben
     public Iterable<Bank> getAllBanks() {
         return banks.values();
     }
-
 
     private void saveFile() {
         try {

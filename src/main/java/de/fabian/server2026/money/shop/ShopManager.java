@@ -3,46 +3,52 @@ package de.fabian.server2026.money.shop;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ShopManager {
 
-    private final FileConfiguration prices;
     private final Map<String, List<ShopItem>> categories = new HashMap<>();
+    private final Map<Material, ShopItem> byMaterial = new HashMap<>();
 
     public ShopManager(FileConfiguration prices) {
-        this.prices = prices;
-        loadItems();
+        reload(prices);
     }
 
-    private void loadItems() {
-        // hole die Section "prices"
-        if (!prices.isConfigurationSection("prices")) return;
-        var section = prices.getConfigurationSection("prices");
+    public void reload(FileConfiguration prices) {
+        categories.clear();
+        byMaterial.clear();
+        loadItems(prices);
+    }
 
+    private void loadItems(FileConfiguration prices) {
+        if (!prices.isConfigurationSection("prices")) return;
+
+        var section = prices.getConfigurationSection("prices");
         for (String key : section.getKeys(false)) {
             double price = section.getDouble(key);
-            Material mat;
+            Material material;
             try {
-                mat = Material.valueOf(key);
+                material = Material.valueOf(key);
             } catch (IllegalArgumentException e) {
-                continue; // ungültiges Material ignorieren
+                continue;
             }
 
             String category = determineCategory(key);
-            ShopItem item = new ShopItem(mat, formatName(key), price);
+            ShopItem item = new ShopItem(material, formatName(key), price);
 
-            categories.computeIfAbsent(category, k -> new ArrayList<>()).add(item);
-            System.out.println("Shop Item geladen: " + key + " für " + price + " Coins");
+            categories.computeIfAbsent(category, ignored -> new ArrayList<>()).add(item);
+            byMaterial.put(material, item);
         }
 
-        // alphabetisch sortieren
         categories.values().forEach(list ->
                 list.sort(Comparator.comparing(ShopItem::getDisplayName))
         );
     }
-
-
 
     private String determineCategory(String key) {
         if (key.startsWith("RAW_") || key.endsWith("_INGOT") || key.contains("DIAMOND") || key.contains("EMERALD")) {
@@ -71,7 +77,7 @@ public class ShopManager {
     }
 
     private String formatName(String key) {
-        return key.replace("_", " ").toLowerCase();
+        return key.replace("_", " ").toLowerCase(Locale.ROOT);
     }
 
     public Map<String, List<ShopItem>> getCategories() {
@@ -80,5 +86,9 @@ public class ShopManager {
 
     public List<ShopItem> getItems(String category) {
         return categories.getOrDefault(category, new ArrayList<>());
+    }
+
+    public ShopItem getByMaterial(Material material) {
+        return byMaterial.get(material);
     }
 }

@@ -1,8 +1,8 @@
 package de.fabian.server2026.money.listener;
 
 import de.fabian.server2026.money.gui.SettingsGUI;
-import de.fabian.server2026.money.settings.PlayerSettingsManager;
 import de.fabian.server2026.money.settings.NotifyType;
+import de.fabian.server2026.money.settings.PlayerSettingsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +18,7 @@ public class SettingsClickListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (!e.getView().getTitle().equals("§8⚙ Einstellungen")) return;
+        if (!e.getView().getTitle().equals(SettingsGUI.TITLE)) return;
 
         e.setCancelled(true);
         Player p = (Player) e.getWhoClicked();
@@ -32,11 +32,19 @@ public class SettingsClickListener implements Listener {
             };
             settings.setNotify(p.getUniqueId(), next);
             p.openInventory(SettingsGUI.create(p));
+            return;
         }
 
         if (e.getSlot() == 15) {
             boolean enabled = settings.isScoreboardEnabled(p.getUniqueId());
             settings.setScoreboardEnabled(p.getUniqueId(), !enabled);
+            p.openInventory(SettingsGUI.create(p));
+            return;
+        }
+
+        if (e.getSlot() == 16) {
+            boolean enabled = settings.isBankHologramEnabled(p.getUniqueId());
+            settings.setBankHologramEnabled(p.getUniqueId(), !enabled);
             p.openInventory(SettingsGUI.create(p));
         }
     }

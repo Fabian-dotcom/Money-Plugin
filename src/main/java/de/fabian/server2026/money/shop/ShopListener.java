@@ -1,5 +1,6 @@
 package de.fabian.server2026.money.shop;
 
+import de.fabian.server2026.money.achievement.AchievementManager;
 import de.fabian.server2026.money.economy.EconomyManager;
 import de.fabian.server2026.money.economy.MoneyScoreboard;
 import de.fabian.server2026.money.settings.PlayerSettingsManager;
@@ -12,7 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 public class ShopListener implements Listener {
 
@@ -21,6 +26,7 @@ public class ShopListener implements Listener {
     private final PlayerSettingsManager settings;
     private final SalesStatsManager stats;
     private final ShopLogManager shopLog;
+    private final AchievementManager achievements;
 
     private final Map<UUID, Long> purchaseCooldown = new HashMap<>();
     private static final long PURCHASE_COOLDOWN_MS = 500L;
@@ -30,13 +36,15 @@ public class ShopListener implements Listener {
             EconomyManager economy,
             PlayerSettingsManager settings,
             SalesStatsManager stats,
-            ShopLogManager shopLog
+            ShopLogManager shopLog,
+            AchievementManager achievements
     ) {
         this.shopGUI = shopGUI;
         this.economy = economy;
         this.settings = settings;
         this.stats = stats;
         this.shopLog = shopLog;
+        this.achievements = achievements;
     }
 
     private boolean checkCooldown(Player player) {
@@ -60,6 +68,14 @@ public class ShopListener implements Listener {
         }
     }
 
+    private String extractShopItemNameFromAmountMenu(String strippedTitle) {
+        String[] parts = strippedTitle.split(" ", 4);
+        if (parts.length >= 4) {
+            return parts[3].trim();
+        }
+        return strippedTitle;
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) return;
@@ -70,15 +86,8 @@ public class ShopListener implements Listener {
         String rawTitle = e.getView().getTitle();
         String title = ChatColor.stripColor(rawTitle);
 
-        // -------------------------
-        // Mengen-Auswahl (AnvilInput)
-        // -------------------------
-        // Mengen-Auswahl (AnvilInput)
-        if (title.startsWith("Wähle Menge für ")) {
+        if (title.toLowerCase(Locale.ROOT).contains("menge")) {
             e.setCancelled(true);
-
-
-            if (clicked == null || clicked.getType().isAir()) return;
 
             String display = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
             int amount;
@@ -88,7 +97,7 @@ public class ShopListener implements Listener {
                 return;
             }
 
-            String wantedName = title.replace("Wähle Menge für ", "").trim();
+            String wantedName = extractShopItemNameFromAmountMenu(title);
             ShopItem shopItem = shopGUI.getManager().getCategories().values().stream()
                     .flatMap(Collection::stream)
                     .filter(it -> it.getDisplayName().equalsIgnoreCase(wantedName))
@@ -106,17 +115,15 @@ public class ShopListener implements Listener {
             economy.addMoney(player.getUniqueId(), -total);
             giveItemOrDrop(player, new ItemStack(shopItem.getMaterial(), amount));
             shopLog.logPurchase(player.getName(), shopItem.getDisplayName(), amount, total);
+            achievements.recordPurchase(player.getUniqueId(), amount, player);
             MoneyScoreboard.update(player, economy, settings, stats);
 
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
-            player.sendMessage(ChatColor.GREEN + "Du hast " + amount + "x " + shopItem.getDisplayName() + " für " + total + " Coins gekauft!");
+            player.sendMessage(ChatColor.GREEN + "Du hast " + amount + "x " + shopItem.getDisplayName() + " fuer " + total + " Coins gekauft!");
             player.closeInventory();
             return;
         }
 
-        // -------------------------
-        // Kategorie-Menü
-        // -------------------------
         if (rawTitle.equals(ChatColor.GOLD + "Shop Kategorien")) {
             e.setCancelled(true);
             String cat = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
@@ -124,9 +131,6 @@ public class ShopListener implements Listener {
             return;
         }
 
-        // -------------------------
-        // Item-Menü (Kategorie)
-        // -------------------------
         if (rawTitle.startsWith(ChatColor.AQUA.toString())) {
             e.setCancelled(true);
 
@@ -142,14 +146,13 @@ public class ShopListener implements Listener {
                     .orElse(null);
             if (shopItem == null) return;
 
-            // Shift → Mengen-Auswahl
             if (e.isShiftClick()) {
                 e.setCancelled(true);
-                AnvilInput.open(player, shopItem, economy, (p, a) -> {});
+                AnvilInput.open(player, shopItem, economy, (p, a) -> {
+                });
                 return;
             }
 
-            // Einzelkauf
             if (!checkCooldown(player)) return;
 
             double price = shopItem.getPrice();
@@ -162,10 +165,11 @@ public class ShopListener implements Listener {
             economy.addMoney(player.getUniqueId(), -price);
             giveItemOrDrop(player, new ItemStack(shopItem.getMaterial(), 1));
             shopLog.logPurchase(player.getName(), shopItem.getDisplayName(), 1, price);
+            achievements.recordPurchase(player.getUniqueId(), 1, player);
             MoneyScoreboard.update(player, economy, settings, stats);
 
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
-            player.sendMessage(ChatColor.GREEN + "Du hast 1x " + shopItem.getDisplayName() + " für " + price + " Coins gekauft!");
+            player.sendMessage(ChatColor.GREEN + "Du hast 1x " + shopItem.getDisplayName() + " fuer " + price + " Coins gekauft!");
         }
     }
 }

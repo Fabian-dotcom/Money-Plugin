@@ -1,5 +1,5 @@
 name: Money
-version: '4.11'
+version: '4.12'
 main: de.fabian.server2026.money.Money
 api-version: '1.21'
 authors: [ DoktorNilson ]
@@ -7,7 +7,7 @@ authors: [ DoktorNilson ]
 commands:
   money:
     description: Zeigt dein Kontostand an
-    usage: /<command>
+    usage: /<command> [settings|top]
   givebank:
     description: Gibt einen Bankblock
     usage: /<command>
@@ -18,7 +18,14 @@ commands:
     description: Ueberweise Geld an einen Spieler
   shop:
     description: Oeffnet den Shop
+    usage: /<command> [reload|price <item>]
   shoplog:
     description: Zeigt Shop-Kauf-Logs an
     usage: /<command> [anzahl|player <name>|item <item>|reload]
     permission: money.shoplog
+  bank:
+    description: Bank-Commands
+    usage: /<command> list
+  achievements:
+    description: Zeigt deine Achievements
+    usage: /<command>

@@ -1,6 +1,7 @@
 package de.fabian.server2026.money.listener;
 
 import de.fabian.server2026.money.Money;
+import de.fabian.server2026.money.achievement.AchievementManager;
 import de.fabian.server2026.money.bank.Bank;
 import de.fabian.server2026.money.bank.BankManager;
 import de.fabian.server2026.money.economy.EconomyManager;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class BankChestListener implements Listener {
@@ -34,6 +36,7 @@ public class BankChestListener implements Listener {
     private final FileConfiguration prices;
     private final PlayerSettingsManager settingsManager;
     private final SalesStatsManager stats;
+    private final AchievementManager achievements;
 
     public BankChestListener(
             Money plugin,
@@ -41,7 +44,8 @@ public class BankChestListener implements Listener {
             EconomyManager economy,
             FileConfiguration prices,
             PlayerSettingsManager settingsManager,
-            SalesStatsManager stats
+            SalesStatsManager stats,
+            AchievementManager achievements
     ) {
         this.plugin = plugin;
         this.bankManager = bankManager;
@@ -49,9 +53,9 @@ public class BankChestListener implements Listener {
         this.prices = prices;
         this.settingsManager = settingsManager;
         this.stats = stats;
+        this.achievements = achievements;
     }
 
-    // Hopper → Barrel
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent event) {
         Inventory dest = event.getDestination();
@@ -64,7 +68,6 @@ public class BankChestListener implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> processInventory(dest, loc), 1L);
     }
 
-    // Spieler schließt Barrel
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inv = event.getInventory();
@@ -109,22 +112,19 @@ public class BankChestListener implements Listener {
         }
 
         if (totalItems > 0) {
-            BankHologramUtil.spawnSellHologram(plugin, loc, totalGiven);
-
             Player ownerPlayer = Bukkit.getPlayer(owner);
+
+            if (settingsManager.isBankHologramEnabled(owner)) {
+                BankHologramUtil.spawnSellHologram(plugin, loc, totalGiven);
+            }
+
+            achievements.recordSales(owner, totalGiven, ownerPlayer);
+
             if (ownerPlayer != null && ownerPlayer.isOnline()) {
-                String message =
-                        "§6💰 Verkauf: §e+"
-                                + String.format("%.2f", totalGiven)
-                                + " Coins §7(x" + totalItems + ")";
+                String message = "�6Verkauf: �e+" + String.format(Locale.US, "%.2f", totalGiven)
+                        + " Coins �7(x" + totalItems + ")";
 
-                MoneyNotifyUtil.notify(
-                        ownerPlayer,
-                        settingsManager,
-                        message
-                );
-
-                // Scoreboard aktualisieren
+                MoneyNotifyUtil.notify(ownerPlayer, settingsManager, message);
                 MoneyScoreboard.update(ownerPlayer, economy, settingsManager, stats);
             }
         }
